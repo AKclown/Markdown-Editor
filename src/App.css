@@ -1,38 +1,163 @@
-.App {
-  text-align: center;
+#App {
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
+#editor {
+  flex: 1;
+}
+
+#markdown {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #222728;
+}
+
+.cm-editor {
+  height: 100%;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: #eee;
+}
+.cm-scroller::-webkit-scrollbar-corner {
+  background: #fff;
+}
+.cm-scroller::-webkit-scrollbar-track {
+  background: #fff;
+}
+.cm-scroller::-webkit-scrollbar-track-piece {
+  background: #fff;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: #eee;
+}
+::-webkit-scrollbar-corner {
+  background: #fff;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff;
+}
+::-webkit-scrollbar-track-piece {
+  background: #fff;
+  width: 8px;
+}
+
+.cm-scroller {
+  display: flex !important;
+  align-items: flex-start !important;
+  font-family: monospace;
+  line-height: 1.4;
+  height: 100%;
+  overflow-x: auto;
+  position: relative;
+  z-index: 0;
+}
+.cm-content {
+  margin: 0;
+  flex-grow: 2;
+  min-height: 100%;
+  display: block;
+  white-space: pre;
+  word-wrap: normal;
+  box-sizing: border-box;
+  padding: 4px 0;
+  outline: none;
+}
+.cm-lineWrapping {
+  white-space: pre-wrap;
+  white-space: break-spaces;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.cm-line {
+  display: block;
+  padding: 0 2px 0 4px;
+}
+.cm-selectionLayer {
+  z-index: -1;
+  contain: size style;
+}
+.cm-selectionBackground {
+  position: absolute;
+}
+.cm-cursorLayer {
+  z-index: 100;
+  contain: size style;
   pointer-events: none;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.cm-dropCursor {
+  position: absolute;
+  border-left: 1.2px solid black;
+  margin-left: -0.6px;
+  pointer-events: none;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.cm-gutters {
   display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  left: 0;
+  z-index: 200;
+}
+.cm-gutter {
+  display: flex !important;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-height: 100%;
+  overflow: hidden;
 }
-
-.App-link {
-  color: #61dafb;
+.cm-gutterElement {
+  box-sizing: border-box;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.cm-lineNumbers .cm-gutterElement {
+  padding: 0 3px 0 5px;
+  min-width: 20px;
+  text-align: right;
+  white-space: nowrap;
+}
+.cm-panels {
+  box-sizing: border-box;
+  position: sticky;
+  left: 0;
+  right: 0;
+}
+.cm-tab {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.cm-widgetBuffer {
+  vertical-align: text-top;
+  height: 1em;
+  display: inline;
+}
+.cm-placeholder {
+  color: #888;
+  display: inline-block;
+  vertical-align: top;
+}
+.cm-textfield {
+  vertical-align: middle;
+  color: inherit;
+  font-size: 70%;
+  border: 1px solid silver;
+  padding: 0.2em 0.5em;
+}
+.cm-textfield::selection {
+  color: #fff !important;
+  background: #1890ff !important;
+}
+.cm-button {
+  vertical-align: middle;
+  color: inherit;
+  font-size: 70%;
+  padding: 0.2em 1em;
+  border-radius: 1px;
 }
