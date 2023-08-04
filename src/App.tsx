@@ -17,6 +17,8 @@ import { highlightOptions } from './highlight';
 import './App.css';
 import { BasicStyleWrap, CodeStyleWrap, MathStyleWrap } from './basic';
 import SyncScroll from './sync';
+import throttle from 'lodash.throttle';
+
 
 interface ASTtreeType {
   type: string;
@@ -41,7 +43,8 @@ export function useClientRect<T>(
 function App() {
   const [docContent, setDocContent] = useState('');
   const [showContent, setShowContent] = useState('');
-  const [AstNode, setAstNode] = useState<Record<string, unknown>[]>([]);
+  // const [AstNode, setAstNode] = useState<Record<string, unknown>[]>([]);
+  const AstNode = useRef<any>(null);
   const instance = useRef<any>(null);
   const [editorView, setEditorView] = useState<any>(null);
 
@@ -64,13 +67,14 @@ function App() {
   const scrollPlugin = useCallback(() => {
     return EditorView.domEventHandlers({
       scroll() {
-        instance.current.syncPreview(AstNode);
+        instance.current.syncPreview(AstNode.current);
       },
       mouseenter() {
         instance.current.currentScrollArea = 'editor';
       },
     })
-  }, [AstNode])
+  }, [])
+
 
   useEffect(() => {
     let view = new EditorView({
@@ -100,15 +104,32 @@ function App() {
     return () => {
       view.destroy();
     };
-  }, [docContent, scrollPlugin]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollPlugin]);
 
 
-  
+  useEffect(() => {
+    const currentValue = editorView ? editorView.state.doc.toString() : '';
+    if (docContent && docContent !== currentValue) {
+      editorView.dispatch({
+        changes: { from: 0, to: currentValue.length, insert: docContent || '' },
+      });
+    }
+  }, [docContent, editorView]);
+
   // *********************
   // MarkDown
   // *********************
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      mdToHTML();
+    }, 100);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docContent])
+
+  const mdToHTML = () => {
     unified()
       .use(remarkParse)
       .use(remarkMath)
@@ -128,15 +149,14 @@ function App() {
           console.error('markdown语法解析失败,失败原因:', error);
         },
       );
-  }, [docContent])
+  }
 
   const customPlugin =
     (): void | Transformer<ASTtreeType> => (tree: ASTtreeType) => {
       const astNodes = tree.children || [];
       const filterAstNodes =
         astNodes.filter((child: any) => child.type === 'element') || [];
-      setAstNode(filterAstNodes)
-
+      AstNode.current = filterAstNodes
     };
 
   // 设置滚动标识
@@ -145,9 +165,9 @@ function App() {
   };
 
   // 滚动事件派发同步
-  const onPreviewScroll = () => {
-    instance.current.syncEditorScroll(AstNode);
-  };
+  const onPreviewScroll = throttle(() => {
+      instance.current.syncEditorScroll(AstNode.current);
+    }, 100);
   // *********************
   // View
   // *********************
